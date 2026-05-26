@@ -52,6 +52,7 @@ Validate the package before registration:
 
 `module.manifest.schema.json` documents the import contract expected by the control plane.
 `docs/control-plane-import.md` describes the expected repository import flow.
+`docs/release.md` describes the tag-and-publish workflow.
 `samples/control-plane-import-request.json` provides a sample management-interface import request.
 
 Initial required Microsoft Graph application permissions:

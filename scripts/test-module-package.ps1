@@ -6,6 +6,7 @@ $requiredFiles = @(
     "Dockerfile",
     "README.md",
     "docs/control-plane-import.md",
+    "docs/release.md",
     "MSPAccountManagementReport/MSPAccountManagementReport.csproj",
     "MSPAccountManagementReport/data/m365-sku-map.json",
     "samples/control-plane-import-request.json",

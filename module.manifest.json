@@ -82,17 +82,20 @@
     {
       "provider": "MicrosoftGraph",
       "permission": "Organization.Read.All",
-      "type": "Application"
+      "type": "Application",
+      "reason": "Reads tenant organization metadata and subscribed SKU information for account-management reporting."
     },
     {
       "provider": "MicrosoftGraph",
       "permission": "User.Read.All",
-      "type": "Application"
+      "type": "Application",
+      "reason": "Reads user profile and assigned license data to identify licensed, unlicensed, and disabled licensed accounts."
     },
     {
       "provider": "MicrosoftGraph",
       "permission": "Directory.Read.All",
-      "type": "Application"
+      "type": "Application",
+      "reason": "Provides directory read coverage for tenant-level reporting where user and license relationships require directory context."
     }
   ],
   "outputsSchema": {

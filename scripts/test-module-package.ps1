@@ -8,6 +8,7 @@ $requiredFiles = @(
     "Dockerfile",
     "README.md",
     "docs/control-plane-import.md",
+    "docs/permissions.md",
     "docs/release.md",
     "MSPAccountManagementReport/MSPAccountManagementReport.csproj",
     "MSPAccountManagementReport/data/m365-sku-map.json",
@@ -82,6 +83,12 @@ if ($manifest.concurrency -lt 1) {
 
 if ($manifest.requiredPermissions.Count -lt 1) {
     throw "Manifest must declare required permissions."
+}
+
+foreach ($permission in $manifest.requiredPermissions) {
+    if ([string]::IsNullOrWhiteSpace($permission.reason)) {
+        throw "Required permission '$($permission.permission)' must include a reason."
+    }
 }
 
 if ($manifest.supportedScopes.Count -lt 1) {

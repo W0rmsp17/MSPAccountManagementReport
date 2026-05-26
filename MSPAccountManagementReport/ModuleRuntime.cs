@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Azure.Identity;
 using Azure.Storage.Blobs;
 
 namespace MSPAccountManagementReport;
@@ -91,7 +92,10 @@ public static class ModuleOutputWriter
         var outputBlobUri = Environment.GetEnvironmentVariable("CONTROL_PLANE_OUTPUT_BLOB_URI");
         if (!string.IsNullOrWhiteSpace(outputBlobUri))
         {
-            var blobClient = new BlobClient(new Uri(outputBlobUri));
+            var blobUri = new Uri(outputBlobUri);
+            var blobClient = string.IsNullOrWhiteSpace(blobUri.Query)
+                ? new BlobClient(blobUri, new DefaultAzureCredential())
+                : new BlobClient(blobUri);
             await using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
             await blobClient.UploadAsync(stream, overwrite: true);
             Console.WriteLine("Report output uploaded to control plane artifact storage.");

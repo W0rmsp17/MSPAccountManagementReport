@@ -1,0 +1,24 @@
+{
+  "jobId": "job-20260526-sample",
+  "moduleId": "msp-account-management-report",
+  "moduleVersion": "0.1.0",
+  "clientConnectionId": "client-contoso",
+  "tenantContext": {
+    "clientId": "client-contoso",
+    "tenantId": "11111111-1111-1111-1111-111111111111",
+    "tenantName": "Contoso"
+  },
+  "targetScope": {
+    "type": "Tenant",
+    "mode": "All",
+    "targets": []
+  },
+  "operator": {
+    "upn": "operator@example.com"
+  },
+  "parameters": {
+    "includeInactiveUsers": true,
+    "includeLicenseWaste": true,
+    "reportFormat": "json"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "1.0",
+  "id": "msp-account-management-report",
+  "name": "MSP Account Management Report",
+  "version": "0.1.0",
+  "description": "Generates an account-management report scaffold for MSP customer review workflows.",
+  "image": "ghcr.io/example/msp-account-management-report:0.1.0",
+  "runtime": "container-apps-job",
+  "timeoutSeconds": 900,
+  "concurrency": 1,
+  "approvalRequired": false,
+  "supportedScopes": [
+    "Tenant",
+    "Users"
+  ],
+  "parametersSchema": {
+    "type": "object",
+    "properties": {
+      "includeInactiveUsers": {
+        "type": "boolean",
+        "default": false
+      },
+      "includeLicenseWaste": {
+        "type": "boolean",
+        "default": true
+      },
+      "reportFormat": {
+        "type": "string",
+        "enum": [
+          "json",
+          "html",
+          "markdown"
+        ],
+        "default": "json"
+      }
+    },
+    "required": []
+  },
+  "requiredPermissions": [
+    {
+      "provider": "MicrosoftGraph",
+      "permission": "Organization.Read.All",
+      "type": "Application"
+    },
+    {
+      "provider": "MicrosoftGraph",
+      "permission": "User.Read.All",
+      "type": "Application"
+    },
+    {
+      "provider": "MicrosoftGraph",
+      "permission": "Directory.Read.All",
+      "type": "Application"
+    }
+  ],
+  "outputsSchema": {
+    "type": "object",
+    "required": [
+      "status",
+      "summary",
+      "findings",
+      "metrics"
+    ]
+  }
+}

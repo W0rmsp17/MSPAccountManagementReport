@@ -46,6 +46,17 @@ Initial required Microsoft Graph application permissions:
 
 Future report sections may require additional permissions such as `Reports.Read.All`.
 
+## SKU Friendly Names
+
+The module ships with a local Microsoft 365 SKU lookup at `MSPAccountManagementReport/data/m365-sku-map.json`.
+This lets reports show friendly names such as `Microsoft 365 Business Premium` when Graph returns technical values like `SPB`.
+
+To regenerate the lookup from a source export:
+
+```powershell
+.\scripts\normalize-sku-map.ps1 -SourcePath ..\Data\skus.json
+```
+
 ## Planned Report Sections
 
 - tenant overview

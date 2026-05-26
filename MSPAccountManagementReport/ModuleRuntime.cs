@@ -122,6 +122,7 @@ public static class AccountManagementReportRunner
         var tenantName = input.TenantContext?.TenantName ?? input.ClientConnectionId;
         var includeInactiveUsers = input.Parameters.TryGetProperty("includeInactiveUsers", out var includeInactiveUsersProperty) &&
                                    includeInactiveUsersProperty.ValueKind == JsonValueKind.True;
+        var skuCatalog = SkuCatalogLookup.LoadDefault();
 
         var findings = new List<ReportFinding>
         {
@@ -134,7 +135,12 @@ public static class AccountManagementReportRunner
                 Severity: "Info",
                 Code: "GRAPH_COLLECTORS_PENDING",
                 Title: "Graph collection not enabled yet",
-                Detail: "This version returns deterministic scaffold metrics. Graph-backed license and usage collectors will be added in a later version.")
+                Detail: "This version returns deterministic scaffold metrics. Graph-backed license and usage collectors will be added in a later version."),
+            new(
+                Severity: "Info",
+                Code: "SKU_CATALOG_LOADED",
+                Title: "License SKU catalog loaded",
+                Detail: $"Loaded {skuCatalog.Count} Microsoft 365 SKU friendly-name mappings.")
         };
 
         if (includeInactiveUsers)
@@ -158,6 +164,7 @@ public static class AccountManagementReportRunner
                 ["unlicensedUsers"] = 0,
                 ["unusedLicenses"] = 0,
                 ["estimatedMonthlyWaste"] = 0,
+                ["skuMappingsLoaded"] = skuCatalog.Count,
                 ["targetCount"] = input.TargetScope?.Targets.Count ?? 0,
                 ["checkedAtUtc"] = DateTimeOffset.UtcNow
             },

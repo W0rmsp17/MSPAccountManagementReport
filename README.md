@@ -50,6 +50,8 @@ Validate the package before registration:
 .\scripts\test-module-package.ps1
 ```
 
+`module.manifest.schema.json` documents the import contract expected by the control plane.
+
 Initial required Microsoft Graph application permissions:
 
 - `Organization.Read.All`

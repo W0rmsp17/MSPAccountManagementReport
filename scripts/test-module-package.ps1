@@ -2,6 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $requiredFiles = @(
     "module.manifest.json",
+    "module.manifest.schema.json",
     "Dockerfile",
     "README.md",
     "MSPAccountManagementReport/MSPAccountManagementReport.csproj",
@@ -45,12 +46,44 @@ if ($manifest.runtime -ne "container-apps-job") {
     throw "Unsupported runtime '$($manifest.runtime)'. Expected 'container-apps-job'."
 }
 
+if ($manifest.schemaVersion -ne "1.0") {
+    throw "Unsupported manifest schemaVersion '$($manifest.schemaVersion)'. Expected '1.0'."
+}
+
+if ($manifest.id -notmatch "^[a-z0-9][a-z0-9-]{2,63}$") {
+    throw "Manifest id '$($manifest.id)' must be lowercase kebab-case."
+}
+
+if ($manifest.version -notmatch "^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$") {
+    throw "Manifest version '$($manifest.version)' must be semantic version compatible."
+}
+
+if ($manifest.image -notmatch ":[^/:]+$") {
+    throw "Manifest image '$($manifest.image)' must include an explicit tag."
+}
+
+if ($manifest.image -notmatch ":$([regex]::Escape($manifest.version))$") {
+    throw "Manifest image tag must match manifest version '$($manifest.version)'."
+}
+
+if ($manifest.timeoutSeconds -lt 1 -or $manifest.timeoutSeconds -gt 3600) {
+    throw "Manifest timeoutSeconds must be between 1 and 3600."
+}
+
+if ($manifest.concurrency -lt 1) {
+    throw "Manifest concurrency must be at least 1."
+}
+
 if ($manifest.requiredPermissions.Count -lt 1) {
     throw "Manifest must declare required permissions."
 }
 
 if ($manifest.supportedScopes.Count -lt 1) {
     throw "Manifest must declare supported scopes."
+}
+
+if ($manifest.outputsSchema.required -notcontains "report") {
+    throw "Manifest outputsSchema must require the report object."
 }
 
 Write-Host "Module package validation passed for $($manifest.id) $($manifest.version)."

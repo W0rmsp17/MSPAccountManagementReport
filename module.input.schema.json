@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/W0rmsp17/MSPAccountManagementReport/module.input.schema.json",
+  "title": "MSP Account Management Report Input",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "jobId",
+    "moduleId",
+    "moduleVersion",
+    "clientConnectionId",
+    "parameters"
+  ],
+  "properties": {
+    "jobId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "moduleId": {
+      "type": "string",
+      "const": "msp-account-management-report"
+    },
+    "moduleVersion": {
+      "type": "string"
+    },
+    "clientConnectionId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tenantContext": {
+      "type": "object",
+      "properties": {
+        "clientId": {
+          "type": "string"
+        },
+        "tenantId": {
+          "type": "string"
+        },
+        "tenantName": {
+          "type": "string"
+        }
+      }
+    },
+    "targetScope": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "Tenant",
+            "Users"
+          ]
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "All",
+            "Selected"
+          ]
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "displayName": {
+                "type": "string"
+              },
+              "userPrincipalName": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "operator": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "upn": {
+          "type": "string"
+        }
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "includeInactiveUsers": {
+          "type": "boolean"
+        },
+        "includeLicenseWaste": {
+          "type": "boolean"
+        },
+        "reportFormat": {
+          "type": "string",
+          "enum": [
+            "json",
+            "markdown"
+          ]
+        }
+      }
+    }
+  }
+}

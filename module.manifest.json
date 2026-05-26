@@ -17,6 +17,7 @@
   "approvalRequired": false,
   "executionContract": {
     "input": {
+      "schema": "module.input.schema.json",
       "type": "json",
       "sources": [
         {

@@ -3,6 +3,7 @@ $ErrorActionPreference = "Stop"
 $requiredFiles = @(
     "module.manifest.json",
     "module.manifest.schema.json",
+    "module.input.schema.json",
     "module.output.schema.json",
     "Dockerfile",
     "README.md",
@@ -93,6 +94,23 @@ if ($manifest.outputsSchema.required -notcontains "report") {
 
 if ($manifest.outputsSchema.schema -ne "module.output.schema.json") {
     throw "Manifest outputsSchema must reference module.output.schema.json."
+}
+
+$inputSchema = Get-Content -LiteralPath "module.input.schema.json" -Raw | ConvertFrom-Json
+$sampleInput = Get-Content -LiteralPath "samples/job-input.json" -Raw | ConvertFrom-Json
+
+if ($manifest.executionContract.input.schema -ne "module.input.schema.json") {
+    throw "Manifest executionContract.input must reference module.input.schema.json."
+}
+
+foreach ($property in $inputSchema.required) {
+    if ($null -eq $sampleInput.$property) {
+        throw "Sample job input is missing required input property: $property"
+    }
+}
+
+if ($sampleInput.moduleId -ne $manifest.id) {
+    throw "Sample job input moduleId must match manifest id."
 }
 
 Write-Host "Module package validation passed for $($manifest.id) $($manifest.version)."

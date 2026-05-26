@@ -2,6 +2,17 @@ name: Publish Module
 
 on:
   push:
+    branches:
+      - "master"
+    paths:
+      - ".github/workflows/publish-module.yml"
+      - "Dockerfile"
+      - "module.manifest.json"
+      - "module.*.schema.json"
+      - "MSPAccountManagementReport/**"
+      - "samples/**"
+      - "scripts/**"
+      - "tests/**"
     tags:
       - "v*.*.*"
   workflow_dispatch:

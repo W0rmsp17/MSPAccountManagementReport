@@ -60,6 +60,7 @@ Validate the package before registration:
 `module.input.schema.json` documents the job input payload expected by the module.
 `module.output.schema.json` documents the structured output contract emitted by the module.
 `docs/control-plane-import.md` describes the expected repository import flow.
+`docs/data-handling.md` describes output sensitivity, retention guidance, and downstream consumer considerations.
 `docs/permissions.md` explains required Microsoft Graph permissions and consent review notes.
 `docs/release.md` describes the tag-and-publish workflow.
 `samples/control-plane-import-request.json` provides a sample management-interface import request.

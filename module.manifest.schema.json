@@ -14,6 +14,7 @@
     "image",
     "runtime",
     "entrypoint",
+    "dataHandling",
     "timeoutSeconds",
     "concurrency",
     "costTier",
@@ -85,6 +86,37 @@
     },
     "approvalRequired": {
       "type": "boolean"
+    },
+    "dataHandling": {
+      "type": "object",
+      "required": [
+        "classification",
+        "containsPersonalData",
+        "containsSecrets",
+        "retentionRecommendationDays",
+        "artifactSensitivity"
+      ],
+      "properties": {
+        "classification": {
+          "type": "string"
+        },
+        "containsPersonalData": {
+          "type": "boolean"
+        },
+        "containsSecrets": {
+          "type": "boolean"
+        },
+        "retentionRecommendationDays": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "artifactSensitivity": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
     },
     "executionContract": {
       "type": "object",

@@ -15,6 +15,14 @@
   "concurrency": 1,
   "costTier": "Low",
   "approvalRequired": false,
+  "dataHandling": {
+    "classification": "CustomerConfidential",
+    "containsPersonalData": true,
+    "containsSecrets": false,
+    "retentionRecommendationDays": 90,
+    "artifactSensitivity": "Tenant user and license reporting data",
+    "notes": "Outputs may include user display names, user principal names, account enabled state, assigned license products, tenant license counts, and account-management recommendations."
+  },
   "executionContract": {
     "input": {
       "schema": "module.input.schema.json",

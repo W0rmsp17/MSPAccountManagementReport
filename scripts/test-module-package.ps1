@@ -8,6 +8,7 @@ $requiredFiles = @(
     "Dockerfile",
     "README.md",
     "docs/control-plane-import.md",
+    "docs/data-handling.md",
     "docs/permissions.md",
     "docs/release.md",
     "MSPAccountManagementReport/MSPAccountManagementReport.csproj",
@@ -36,6 +37,7 @@ $requiredManifestProperties = @(
     "image",
     "runtime",
     "entrypoint",
+    "dataHandling",
     "executionContract",
     "supportedScopes",
     "parametersSchema",
@@ -79,6 +81,22 @@ if ($manifest.timeoutSeconds -lt 1 -or $manifest.timeoutSeconds -gt 3600) {
 
 if ($manifest.concurrency -lt 1) {
     throw "Manifest concurrency must be at least 1."
+}
+
+if ([string]::IsNullOrWhiteSpace($manifest.dataHandling.classification)) {
+    throw "Manifest dataHandling.classification is required."
+}
+
+if ($null -eq $manifest.dataHandling.containsPersonalData) {
+    throw "Manifest dataHandling.containsPersonalData is required."
+}
+
+if ($null -eq $manifest.dataHandling.containsSecrets) {
+    throw "Manifest dataHandling.containsSecrets is required."
+}
+
+if ($manifest.dataHandling.retentionRecommendationDays -lt 1) {
+    throw "Manifest dataHandling.retentionRecommendationDays must be at least 1."
 }
 
 if ($manifest.requiredPermissions.Count -lt 1) {

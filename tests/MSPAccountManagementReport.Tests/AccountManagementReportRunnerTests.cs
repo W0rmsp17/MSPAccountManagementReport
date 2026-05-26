@@ -54,6 +54,10 @@ public sealed class AccountManagementReportRunnerTests
         Assert.Contains(result.Report.Recommendations, recommendation => recommendation.Code == "DISABLED_USERS_WITH_LICENSES");
         Assert.Contains(result.Report.Recommendations, recommendation => recommendation.Code == "UNLICENSED_USERS_PRESENT");
         Assert.Contains(result.Report.Recommendations, recommendation => recommendation.Code == "AVAILABLE_LICENSE_CAPACITY");
+        Assert.NotNull(result.Report.RenderedReport);
+        Assert.Equal("markdown", result.Report.RenderedReport.Format);
+        Assert.Contains("MSP Account Management Report - Contoso", result.Report.RenderedReport.Content);
+        Assert.Contains("Microsoft 365 Business Premium", result.Report.RenderedReport.Content);
         Assert.Contains(result.Findings, finding => finding.Code == "INACTIVE_USER_SECTION_REQUESTED");
         Assert.Contains(result.Findings, finding => finding.Code == "UNKNOWN_SKU_MAPPING");
         Assert.Contains(result.Findings, finding => finding.Code == "DISABLED_USERS_WITH_LICENSES");

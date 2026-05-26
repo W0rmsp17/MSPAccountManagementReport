@@ -191,31 +191,39 @@ public static class AccountManagementReportRunner
                 Detail: "The request asked for inactive user analysis. This will require Graph reporting data in a later implementation."));
         }
 
+        var metrics = new Dictionary<string, object?>
+        {
+            ["licenseSkuCount"] = licenseSummary.Count,
+            ["totalLicenses"] = licenseSummary.Sum(item => item.TotalLicenses),
+            ["assignedLicenses"] = licenseSummary.Sum(item => item.AssignedLicenses),
+            ["availableLicenses"] = licenseSummary.Sum(item => item.AvailableLicenses),
+            ["usersChecked"] = userLicenses.Count,
+            ["licensedUsers"] = userLicenses.Count(item => item.IsLicensed),
+            ["unlicensedUsers"] = userLicenses.Count(item => !item.IsLicensed),
+            ["disabledLicensedUsers"] = userLicenses.Count(item => item.IsLicensed && item.AccountEnabled == false),
+            ["recommendationCount"] = recommendations.Count,
+            ["unknownSkuMappings"] = licenseSummary.Count(item => !item.FriendlyNameKnown),
+            ["estimatedMonthlyWaste"] = 0,
+            ["skuMappingsLoaded"] = skuCatalog.Count,
+            ["subscribedSkuSource"] = subscribedSkus.Source,
+            ["userSource"] = users.Source,
+            ["targetCount"] = input.TargetScope?.Targets.Count ?? 0,
+            ["checkedAtUtc"] = DateTimeOffset.UtcNow
+        };
+        var renderedReport = new MarkdownReportRenderer().Render(
+            tenantName,
+            metrics,
+            licenseSummary,
+            userLicenses,
+            recommendations);
+
         return new ModuleJobOutput
         {
             JobId = input.JobId,
             Status = "Succeeded",
             Summary = $"Account management report scaffold generated for {tenantName}.",
             Findings = findings,
-            Metrics = new Dictionary<string, object?>
-            {
-                ["licenseSkuCount"] = licenseSummary.Count,
-                ["totalLicenses"] = licenseSummary.Sum(item => item.TotalLicenses),
-                ["assignedLicenses"] = licenseSummary.Sum(item => item.AssignedLicenses),
-                ["availableLicenses"] = licenseSummary.Sum(item => item.AvailableLicenses),
-                ["usersChecked"] = userLicenses.Count,
-                ["licensedUsers"] = userLicenses.Count(item => item.IsLicensed),
-                ["unlicensedUsers"] = userLicenses.Count(item => !item.IsLicensed),
-                ["disabledLicensedUsers"] = userLicenses.Count(item => item.IsLicensed && item.AccountEnabled == false),
-                ["recommendationCount"] = recommendations.Count,
-                ["unknownSkuMappings"] = licenseSummary.Count(item => !item.FriendlyNameKnown),
-                ["estimatedMonthlyWaste"] = 0,
-                ["skuMappingsLoaded"] = skuCatalog.Count,
-                ["subscribedSkuSource"] = subscribedSkus.Source,
-                ["userSource"] = users.Source,
-                ["targetCount"] = input.TargetScope?.Targets.Count ?? 0,
-                ["checkedAtUtc"] = DateTimeOffset.UtcNow
-            },
+            Metrics = metrics,
             Report = new AccountManagementReportData
             {
                 LicenseSummary = new LicenseReportSection
@@ -226,7 +234,8 @@ public static class AccountManagementReportRunner
                 {
                     Items = userLicenses
                 },
-                Recommendations = recommendations
+                Recommendations = recommendations,
+                RenderedReport = renderedReport
             },
             Artifacts =
             [

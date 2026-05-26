@@ -99,7 +99,13 @@ public sealed record AccountManagementReportData
     public UserLicenseReportSection UserLicenses { get; init; } = new();
 
     public IReadOnlyList<ReportRecommendation> Recommendations { get; init; } = [];
+
+    public RenderedReport? RenderedReport { get; init; }
 }
+
+public sealed record RenderedReport(
+    string Format,
+    string Content);
 
 public sealed record LicenseReportSection
 {

@@ -4,7 +4,7 @@ A snap-in module for the MSP Automation Control Plane.
 
 This module is intended to produce account-management reporting that an MSP account manager can use for customer review conversations: tenant overview, license usage, unused license indicators, cost signals, and governance findings.
 
-The first version validates the standalone module repository, Docker image, module manifest, job input parsing, result output path, subscribed SKU license-summary report shape, user license assignment summary, and account-management recommendations.
+The first version validates the standalone module repository, Docker image, module manifest, job input parsing, result output path, subscribed SKU license-summary report shape, user license assignment summary, account-management recommendations, and a rendered Markdown report body.
 
 ## Module Contract
 
@@ -73,3 +73,5 @@ To regenerate the lookup from a source export:
 - account-management findings and recommendations
 
 Current recommendations include disabled users with licenses, unlicensed users, and available license capacity.
+
+The output also includes `report.renderedReport`, a Markdown report body intended for controller UI display, email body generation, or later artifact rendering.

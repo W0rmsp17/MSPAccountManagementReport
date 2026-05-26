@@ -57,6 +57,7 @@ Validate the package before registration:
 ```
 
 `module.manifest.schema.json` documents the import contract expected by the control plane.
+`module.output.schema.json` documents the structured output contract emitted by the module.
 `docs/control-plane-import.md` describes the expected repository import flow.
 `docs/release.md` describes the tag-and-publish workflow.
 `samples/control-plane-import-request.json` provides a sample management-interface import request.

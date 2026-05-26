@@ -95,6 +95,7 @@
     }
   ],
   "outputsSchema": {
+    "schema": "module.output.schema.json",
     "type": "object",
     "required": [
       "status",

@@ -40,6 +40,24 @@ try {
         throw "Smoke output is missing rendered report content."
     }
 
+    $requiredMetrics = @(
+        "licenseSkuCount",
+        "totalLicenses",
+        "assignedLicenses",
+        "availableLicenses",
+        "usersChecked",
+        "licensedUsers",
+        "unlicensedUsers",
+        "disabledLicensedUsers",
+        "recommendationCount"
+    )
+
+    foreach ($metric in $requiredMetrics) {
+        if ($null -eq $result.metrics.$metric) {
+            throw "Smoke output is missing required metric: $metric"
+        }
+    }
+
     Write-Host "Local smoke test passed. Output: $outputPath"
 }
 finally {

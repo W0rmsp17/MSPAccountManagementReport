@@ -3,6 +3,7 @@ $ErrorActionPreference = "Stop"
 $requiredFiles = @(
     "module.manifest.json",
     "module.manifest.schema.json",
+    "module.output.schema.json",
     "Dockerfile",
     "README.md",
     "docs/control-plane-import.md",
@@ -88,6 +89,10 @@ if ($manifest.supportedScopes.Count -lt 1) {
 
 if ($manifest.outputsSchema.required -notcontains "report") {
     throw "Manifest outputsSchema must require the report object."
+}
+
+if ($manifest.outputsSchema.schema -ne "module.output.schema.json") {
+    throw "Manifest outputsSchema must reference module.output.schema.json."
 }
 
 Write-Host "Module package validation passed for $($manifest.id) $($manifest.version)."

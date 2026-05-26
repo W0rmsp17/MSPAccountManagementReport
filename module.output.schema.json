@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/W0rmsp17/MSPAccountManagementReport/module.output.schema.json",
+  "title": "MSP Account Management Report Output",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "jobId",
+    "status",
+    "summary",
+    "findings",
+    "metrics",
+    "report",
+    "artifacts"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string"
+    },
+    "jobId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Succeeded",
+        "Failed",
+        "Partial"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "severity",
+          "code",
+          "title",
+          "detail"
+        ]
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required": [
+        "licenseSkuCount",
+        "totalLicenses",
+        "assignedLicenses",
+        "availableLicenses",
+        "usersChecked",
+        "licensedUsers",
+        "unlicensedUsers",
+        "disabledLicensedUsers",
+        "recommendationCount"
+      ]
+    },
+    "report": {
+      "type": "object",
+      "required": [
+        "licenseSummary",
+        "userLicenses",
+        "recommendations",
+        "renderedReport"
+      ],
+      "properties": {
+        "licenseSummary": {
+          "type": "object",
+          "required": [
+            "items"
+          ]
+        },
+        "userLicenses": {
+          "type": "object",
+          "required": [
+            "items"
+          ]
+        },
+        "recommendations": {
+          "type": "array"
+        },
+        "renderedReport": {
+          "type": "object",
+          "required": [
+            "format",
+            "content"
+          ]
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array"
+    }
+  }
+}

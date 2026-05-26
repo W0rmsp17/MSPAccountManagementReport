@@ -4,11 +4,52 @@
   "name": "MSP Account Management Report",
   "version": "0.1.0",
   "description": "Generates account-management reporting for MSP customer review workflows, starting with Microsoft 365 license summary data.",
-  "image": "ghcr.io/example/msp-account-management-report:0.1.0",
+  "repository": "https://github.com/W0rmsp17/MSPAccountManagementReport",
+  "image": "ghcr.io/w0rmsp17/mspaccountmanagementreport/msp-account-management-report:0.1.0",
   "runtime": "container-apps-job",
+  "entrypoint": [
+    "dotnet",
+    "MSPAccountManagementReport.dll"
+  ],
   "timeoutSeconds": 900,
   "concurrency": 1,
+  "costTier": "Low",
   "approvalRequired": false,
+  "executionContract": {
+    "input": {
+      "type": "json",
+      "sources": [
+        {
+          "name": "CONTROL_PLANE_JOB_INPUT_BASE64",
+          "type": "environment"
+        },
+        {
+          "name": "argument[0]",
+          "type": "filePath"
+        }
+      ]
+    },
+    "output": {
+      "type": "json",
+      "destinations": [
+        {
+          "name": "CONTROL_PLANE_OUTPUT_BLOB_URI",
+          "type": "blobSasUri"
+        },
+        {
+          "name": "CONTROL_PLANE_OUTPUT_PATH",
+          "type": "filePath"
+        }
+      ]
+    },
+    "environment": [
+      {
+        "name": "GRAPH_ACCESS_TOKEN",
+        "required": false,
+        "description": "Microsoft Graph bearer token supplied by the control plane for live collection. Local sample data is used when omitted."
+      }
+    ]
+  },
   "supportedScopes": [
     "Tenant",
     "Users"
@@ -59,7 +100,14 @@
       "status",
       "summary",
       "findings",
-      "metrics"
+      "metrics",
+      "report"
+    ]
+  },
+  "artifacts": {
+    "structuredJson": true,
+    "renderedFormats": [
+      "markdown"
     ]
   }
 }

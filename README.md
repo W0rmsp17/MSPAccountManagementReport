@@ -41,7 +41,14 @@ docker build -t msp-account-management-report:0.1.0 .
 
 ## Manifest
 
-Register `module.manifest.json` in the control plane after replacing the `image` value with the published container image.
+Register `module.manifest.json` in the control plane after publishing the container image.
+The manifest declares the module image, runtime, entrypoint, supported scopes, parameter schema, required Graph permissions, and execution contract.
+
+Validate the package before registration:
+
+```powershell
+.\scripts\test-module-package.ps1
+```
 
 Initial required Microsoft Graph application permissions:
 

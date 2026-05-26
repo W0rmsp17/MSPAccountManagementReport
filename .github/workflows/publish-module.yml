@@ -22,6 +22,10 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
+      - name: Validate module package
+        shell: pwsh
+        run: ./scripts/test-module-package.ps1
+
       - name: Test
         run: dotnet test MSPAccountManagementReport.sln --configuration Release
 

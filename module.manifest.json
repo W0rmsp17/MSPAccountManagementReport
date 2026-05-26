@@ -3,7 +3,7 @@
   "id": "msp-account-management-report",
   "name": "MSP Account Management Report",
   "version": "0.1.0",
-  "description": "Generates an account-management report scaffold for MSP customer review workflows.",
+  "description": "Generates account-management reporting for MSP customer review workflows, starting with Microsoft 365 license summary data.",
   "image": "ghcr.io/example/msp-account-management-report:0.1.0",
   "runtime": "container-apps-job",
   "timeoutSeconds": 900,

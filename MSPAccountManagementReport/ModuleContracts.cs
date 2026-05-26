@@ -69,6 +69,8 @@ public sealed record ModuleJobOutput
 
     public IReadOnlyDictionary<string, object?> Metrics { get; init; } = new Dictionary<string, object?>();
 
+    public AccountManagementReportData? Report { get; init; }
+
     public IReadOnlyList<ReportArtifact> Artifacts { get; init; } = [];
 }
 
@@ -82,3 +84,34 @@ public sealed record ReportArtifact(
     string Type,
     string Name,
     string? Uri);
+
+public sealed record AccountManagementReportData
+{
+    public LicenseReportSection LicenseSummary { get; init; } = new();
+}
+
+public sealed record LicenseReportSection
+{
+    public IReadOnlyList<LicenseSummaryItem> Items { get; init; } = [];
+}
+
+public sealed record LicenseSummaryItem
+{
+    public required string SkuPartNumber { get; init; }
+
+    public string? SkuId { get; init; }
+
+    public required string DisplayName { get; init; }
+
+    public bool FriendlyNameKnown { get; init; }
+
+    public int TotalLicenses { get; init; }
+
+    public int AssignedLicenses { get; init; }
+
+    public int AvailableLicenses { get; init; }
+
+    public int SuspendedLicenses { get; init; }
+
+    public int WarningLicenses { get; init; }
+}

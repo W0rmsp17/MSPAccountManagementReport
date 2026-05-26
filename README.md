@@ -4,7 +4,7 @@ A snap-in module for the MSP Automation Control Plane.
 
 This module is intended to produce account-management reporting that an MSP account manager can use for customer review conversations: tenant overview, license usage, unused license indicators, cost signals, and governance findings.
 
-The first version is a contract-validating scaffold. It proves the standalone module repository, Docker image, module manifest, job input parsing, and result output path before adding Microsoft Graph collection logic.
+The first version validates the standalone module repository, Docker image, module manifest, job input parsing, result output path, and subscribed SKU license-summary report shape.
 
 ## Module Contract
 
@@ -20,6 +20,9 @@ The module writes output to:
 - `CONTROL_PLANE_OUTPUT_PATH` when supplied locally
 - `.out/result.json` by default
 
+Live Microsoft Graph collection is enabled when the controller supplies `GRAPH_ACCESS_TOKEN`.
+Without that token, the module uses `samples/subscribed-skus.sample.json` so local runs and CI remain deterministic.
+
 ## Local Run
 
 ```powershell
@@ -27,6 +30,8 @@ dotnet run --project .\MSPAccountManagementReport\MSPAccountManagementReport.csp
 ```
 
 Output is written to `.out/result.json`.
+
+The local sample includes Microsoft 365 Business Premium plus one unknown SKU to exercise fallback behavior.
 
 ## Docker Build
 

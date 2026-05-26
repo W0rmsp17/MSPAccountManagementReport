@@ -18,7 +18,7 @@ public static class ModuleProgram
         try
         {
             var input = await ModuleInputLoader.LoadAsync(args);
-            var report = AccountManagementReportRunner.Run(input);
+            var report = await AccountManagementReportRunner.RunAsync(input);
             await ModuleOutputWriter.WriteAsync(report);
 
             Console.WriteLine($"Account management report completed for job '{input.JobId}'.");
@@ -117,12 +117,18 @@ public static class ModuleOutputWriter
 
 public static class AccountManagementReportRunner
 {
-    public static ModuleJobOutput Run(ModuleJobInput input)
+    public static async Task<ModuleJobOutput> RunAsync(ModuleJobInput input, HttpClient? httpClient = null)
     {
         var tenantName = input.TenantContext?.TenantName ?? input.ClientConnectionId;
         var includeInactiveUsers = input.Parameters.TryGetProperty("includeInactiveUsers", out var includeInactiveUsersProperty) &&
                                    includeInactiveUsersProperty.ValueKind == JsonValueKind.True;
         var skuCatalog = SkuCatalogLookup.LoadDefault();
+        using var ownedHttpClient = httpClient is null ? new HttpClient() : null;
+        var collector = new SubscribedSkuCollector(
+            httpClient ?? ownedHttpClient!,
+            Environment.GetEnvironmentVariable("GRAPH_ACCESS_TOKEN"));
+        var subscribedSkus = await collector.CollectAsync();
+        var licenseSummary = new LicenseSummaryBuilder(skuCatalog).Build(subscribedSkus.Skus);
 
         var findings = new List<ReportFinding>
         {
@@ -133,15 +139,26 @@ public static class AccountManagementReportRunner
                 Detail: $"Generated account-management report scaffold for '{tenantName}'."),
             new(
                 Severity: "Info",
-                Code: "GRAPH_COLLECTORS_PENDING",
-                Title: "Graph collection not enabled yet",
-                Detail: "This version returns deterministic scaffold metrics. Graph-backed license and usage collectors will be added in a later version."),
+                Code: subscribedSkus.Source == "Graph" ? "GRAPH_SUBSCRIBED_SKUS_COLLECTED" : "GRAPH_SUBSCRIBED_SKUS_SAMPLE_USED",
+                Title: subscribedSkus.Source == "Graph" ? "Subscribed SKU collection completed" : "Sample subscribed SKU data used",
+                Detail: subscribedSkus.Source == "Graph"
+                    ? "Collected subscribed SKU data from Microsoft Graph."
+                    : "No GRAPH_ACCESS_TOKEN was supplied, so the module used local sample subscribed SKU data."),
             new(
                 Severity: "Info",
                 Code: "SKU_CATALOG_LOADED",
                 Title: "License SKU catalog loaded",
                 Detail: $"Loaded {skuCatalog.Count} Microsoft 365 SKU friendly-name mappings.")
         };
+
+        foreach (var unknownSku in licenseSummary.Where(item => !item.FriendlyNameKnown))
+        {
+            findings.Add(new ReportFinding(
+                Severity: "Warning",
+                Code: "UNKNOWN_SKU_MAPPING",
+                Title: "Unknown license SKU mapping",
+                Detail: $"No friendly-name mapping was found for SKU '{unknownSku.SkuPartNumber}'. The technical SKU value was used as the display name."));
+        }
 
         if (includeInactiveUsers)
         {
@@ -160,13 +177,23 @@ public static class AccountManagementReportRunner
             Findings = findings,
             Metrics = new Dictionary<string, object?>
             {
-                ["licensedUsers"] = 0,
-                ["unlicensedUsers"] = 0,
-                ["unusedLicenses"] = 0,
+                ["licenseSkuCount"] = licenseSummary.Count,
+                ["totalLicenses"] = licenseSummary.Sum(item => item.TotalLicenses),
+                ["assignedLicenses"] = licenseSummary.Sum(item => item.AssignedLicenses),
+                ["availableLicenses"] = licenseSummary.Sum(item => item.AvailableLicenses),
+                ["unknownSkuMappings"] = licenseSummary.Count(item => !item.FriendlyNameKnown),
                 ["estimatedMonthlyWaste"] = 0,
                 ["skuMappingsLoaded"] = skuCatalog.Count,
+                ["subscribedSkuSource"] = subscribedSkus.Source,
                 ["targetCount"] = input.TargetScope?.Targets.Count ?? 0,
                 ["checkedAtUtc"] = DateTimeOffset.UtcNow
+            },
+            Report = new AccountManagementReportData
+            {
+                LicenseSummary = new LicenseReportSection
+                {
+                    Items = licenseSummary
+                }
             },
             Artifacts =
             [

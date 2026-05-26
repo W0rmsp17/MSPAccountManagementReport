@@ -5,7 +5,7 @@ namespace MSPAccountManagementReport.Tests;
 public sealed class AccountManagementReportRunnerTests
 {
     [Fact]
-    public void Run_ReturnsSucceededOutputWithExpectedMetrics()
+    public async Task RunAsync_ReturnsSucceededOutputWithExpectedLicenseSummary()
     {
         var input = new ModuleJobInput
         {
@@ -33,12 +33,19 @@ public sealed class AccountManagementReportRunnerTests
             Parameters = JsonDocument.Parse("""{"includeInactiveUsers":true}""").RootElement
         };
 
-        var result = AccountManagementReportRunner.Run(input);
+        var result = await AccountManagementReportRunner.RunAsync(input);
 
         Assert.Equal("Succeeded", result.Status);
         Assert.Equal("job-test", result.JobId);
         Assert.Contains("Contoso", result.Summary);
         Assert.Equal(1, result.Metrics["targetCount"]);
+        Assert.Equal(2, result.Metrics["licenseSkuCount"]);
+        Assert.Equal(30, result.Metrics["totalLicenses"]);
+        Assert.Equal(20, result.Metrics["assignedLicenses"]);
+        Assert.Equal(10, result.Metrics["availableLicenses"]);
+        Assert.NotNull(result.Report);
+        Assert.Contains(result.Report.LicenseSummary.Items, item => item.SkuPartNumber == "SPB" && item.DisplayName == "Microsoft 365 Business Premium");
         Assert.Contains(result.Findings, finding => finding.Code == "INACTIVE_USER_SECTION_REQUESTED");
+        Assert.Contains(result.Findings, finding => finding.Code == "UNKNOWN_SKU_MAPPING");
     }
 }

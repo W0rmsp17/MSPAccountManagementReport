@@ -75,3 +75,9 @@ To regenerate the lookup from a source export:
 Current recommendations include disabled users with licenses, unlicensed users, and available license capacity.
 
 The output also includes `report.renderedReport`, a Markdown report body intended for controller UI display, email body generation, or later artifact rendering.
+
+## Downstream Consumers
+
+The module treats structured JSON output as the source of truth.
+The rendered report is a convenience layer, not the only supported consumption path.
+Future platform consumers can use the same output payload for management UI display, email delivery, webhooks, PSA integrations, dashboards, or bring-your-own AI report generation without changing the module execution contract.

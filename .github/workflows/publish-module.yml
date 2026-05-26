@@ -39,7 +39,7 @@ jobs:
         run: |
           version="${GITHUB_REF_NAME#v}"
           if [[ "$GITHUB_REF_TYPE" != "tag" ]]; then
-            version="0.1.0-dev.${GITHUB_RUN_NUMBER}"
+            version="$(jq -r '.version' module.manifest.json)"
           fi
           image="ghcr.io/${GITHUB_REPOSITORY,,}/msp-account-management-report"
           echo "version=${version}" >> "$GITHUB_OUTPUT"

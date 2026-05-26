@@ -5,8 +5,10 @@ $requiredFiles = @(
     "module.manifest.schema.json",
     "Dockerfile",
     "README.md",
+    "docs/control-plane-import.md",
     "MSPAccountManagementReport/MSPAccountManagementReport.csproj",
     "MSPAccountManagementReport/data/m365-sku-map.json",
+    "samples/control-plane-import-request.json",
     "samples/job-input.json",
     "samples/subscribed-skus.sample.json",
     "samples/users.sample.json"

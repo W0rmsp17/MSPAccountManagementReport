@@ -15,6 +15,7 @@
   <ItemGroup>
     <None Include="..\samples\job-input.json" Link="samples\job-input.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\samples\subscribed-skus.sample.json" Link="samples\subscribed-skus.sample.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\samples\users.sample.json" Link="samples\users.sample.json" CopyToOutputDirectory="PreserveNewest" />
     <None Include="data\m365-sku-map.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

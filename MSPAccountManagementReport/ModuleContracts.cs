@@ -88,6 +88,8 @@ public sealed record ReportArtifact(
 public sealed record AccountManagementReportData
 {
     public LicenseReportSection LicenseSummary { get; init; } = new();
+
+    public UserLicenseReportSection UserLicenses { get; init; } = new();
 }
 
 public sealed record LicenseReportSection
@@ -114,4 +116,35 @@ public sealed record LicenseSummaryItem
     public int SuspendedLicenses { get; init; }
 
     public int WarningLicenses { get; init; }
+}
+
+public sealed record UserLicenseReportSection
+{
+    public IReadOnlyList<UserLicenseItem> Items { get; init; } = [];
+}
+
+public sealed record UserLicenseItem
+{
+    public string? Id { get; init; }
+
+    public string? DisplayName { get; init; }
+
+    public string? UserPrincipalName { get; init; }
+
+    public bool? AccountEnabled { get; init; }
+
+    public bool IsLicensed { get; init; }
+
+    public IReadOnlyList<UserAssignedLicenseItem> Licenses { get; init; } = [];
+}
+
+public sealed record UserAssignedLicenseItem
+{
+    public string? SkuId { get; init; }
+
+    public string? SkuPartNumber { get; init; }
+
+    public required string DisplayName { get; init; }
+
+    public bool FriendlyNameKnown { get; init; }
 }

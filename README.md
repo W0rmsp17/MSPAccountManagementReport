@@ -21,7 +21,7 @@ The module writes output to:
 - `.out/result.json` by default
 
 Live Microsoft Graph collection is enabled when the controller supplies `GRAPH_ACCESS_TOKEN`.
-Without that token, the module uses `samples/subscribed-skus.sample.json` so local runs and CI remain deterministic.
+Without that token, the module uses `samples/subscribed-skus.sample.json` and `samples/users.sample.json` so local runs and CI remain deterministic.
 
 ## Local Run
 
@@ -31,7 +31,7 @@ dotnet run --project .\MSPAccountManagementReport\MSPAccountManagementReport.csp
 
 Output is written to `.out/result.json`.
 
-The local sample includes Microsoft 365 Business Premium plus one unknown SKU to exercise fallback behavior.
+The local sample includes Microsoft 365 Business Premium, one unknown SKU to exercise fallback behavior, licensed users, an unlicensed user, and a disabled licensed user.
 
 ## Docker Build
 

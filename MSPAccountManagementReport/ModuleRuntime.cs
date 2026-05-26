@@ -129,6 +129,11 @@ public static class AccountManagementReportRunner
             Environment.GetEnvironmentVariable("GRAPH_ACCESS_TOKEN"));
         var subscribedSkus = await collector.CollectAsync();
         var licenseSummary = new LicenseSummaryBuilder(skuCatalog).Build(subscribedSkus.Skus);
+        var userCollector = new UserCollector(
+            httpClient ?? ownedHttpClient!,
+            Environment.GetEnvironmentVariable("GRAPH_ACCESS_TOKEN"));
+        var users = await userCollector.CollectAsync();
+        var userLicenses = new UserLicenseSummaryBuilder(licenseSummary).Build(users.Users);
 
         var findings = new List<ReportFinding>
         {
@@ -144,6 +149,13 @@ public static class AccountManagementReportRunner
                 Detail: subscribedSkus.Source == "Graph"
                     ? "Collected subscribed SKU data from Microsoft Graph."
                     : "No GRAPH_ACCESS_TOKEN was supplied, so the module used local sample subscribed SKU data."),
+            new(
+                Severity: "Info",
+                Code: users.Source == "Graph" ? "GRAPH_USERS_COLLECTED" : "GRAPH_USERS_SAMPLE_USED",
+                Title: users.Source == "Graph" ? "User collection completed" : "Sample user data used",
+                Detail: users.Source == "Graph"
+                    ? "Collected user license assignment data from Microsoft Graph."
+                    : "No GRAPH_ACCESS_TOKEN was supplied, so the module used local sample user data."),
             new(
                 Severity: "Info",
                 Code: "SKU_CATALOG_LOADED",
@@ -181,10 +193,15 @@ public static class AccountManagementReportRunner
                 ["totalLicenses"] = licenseSummary.Sum(item => item.TotalLicenses),
                 ["assignedLicenses"] = licenseSummary.Sum(item => item.AssignedLicenses),
                 ["availableLicenses"] = licenseSummary.Sum(item => item.AvailableLicenses),
+                ["usersChecked"] = userLicenses.Count,
+                ["licensedUsers"] = userLicenses.Count(item => item.IsLicensed),
+                ["unlicensedUsers"] = userLicenses.Count(item => !item.IsLicensed),
+                ["disabledLicensedUsers"] = userLicenses.Count(item => item.IsLicensed && item.AccountEnabled == false),
                 ["unknownSkuMappings"] = licenseSummary.Count(item => !item.FriendlyNameKnown),
                 ["estimatedMonthlyWaste"] = 0,
                 ["skuMappingsLoaded"] = skuCatalog.Count,
                 ["subscribedSkuSource"] = subscribedSkus.Source,
+                ["userSource"] = users.Source,
                 ["targetCount"] = input.TargetScope?.Targets.Count ?? 0,
                 ["checkedAtUtc"] = DateTimeOffset.UtcNow
             },
@@ -193,6 +210,10 @@ public static class AccountManagementReportRunner
                 LicenseSummary = new LicenseReportSection
                 {
                     Items = licenseSummary
+                },
+                UserLicenses = new UserLicenseReportSection
+                {
+                    Items = userLicenses
                 }
             },
             Artifacts =

@@ -34,3 +34,27 @@ public sealed record GraphPrepaidUnits
     [JsonPropertyName("warning")]
     public int Warning { get; init; }
 }
+
+public sealed record GraphUser
+{
+    [JsonPropertyName("id")]
+    public string? Id { get; init; }
+
+    [JsonPropertyName("displayName")]
+    public string? DisplayName { get; init; }
+
+    [JsonPropertyName("userPrincipalName")]
+    public string? UserPrincipalName { get; init; }
+
+    [JsonPropertyName("accountEnabled")]
+    public bool? AccountEnabled { get; init; }
+
+    [JsonPropertyName("assignedLicenses")]
+    public IReadOnlyList<GraphAssignedLicense> AssignedLicenses { get; init; } = [];
+}
+
+public sealed record GraphAssignedLicense
+{
+    [JsonPropertyName("skuId")]
+    public string? SkuId { get; init; }
+}

@@ -47,10 +47,15 @@ public sealed class AccountManagementReportRunnerTests
         Assert.Equal(2, result.Metrics["licensedUsers"]);
         Assert.Equal(1, result.Metrics["unlicensedUsers"]);
         Assert.Equal(1, result.Metrics["disabledLicensedUsers"]);
+        Assert.Equal(3, result.Metrics["recommendationCount"]);
         Assert.NotNull(result.Report);
         Assert.Contains(result.Report.LicenseSummary.Items, item => item.SkuPartNumber == "SPB" && item.DisplayName == "Microsoft 365 Business Premium");
         Assert.Contains(result.Report.UserLicenses.Items, item => item.UserPrincipalName == "alex.standard@example.com" && item.IsLicensed);
+        Assert.Contains(result.Report.Recommendations, recommendation => recommendation.Code == "DISABLED_USERS_WITH_LICENSES");
+        Assert.Contains(result.Report.Recommendations, recommendation => recommendation.Code == "UNLICENSED_USERS_PRESENT");
+        Assert.Contains(result.Report.Recommendations, recommendation => recommendation.Code == "AVAILABLE_LICENSE_CAPACITY");
         Assert.Contains(result.Findings, finding => finding.Code == "INACTIVE_USER_SECTION_REQUESTED");
         Assert.Contains(result.Findings, finding => finding.Code == "UNKNOWN_SKU_MAPPING");
+        Assert.Contains(result.Findings, finding => finding.Code == "DISABLED_USERS_WITH_LICENSES");
     }
 }

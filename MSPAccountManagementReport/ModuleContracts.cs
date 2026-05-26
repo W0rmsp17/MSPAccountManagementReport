@@ -80,6 +80,13 @@ public sealed record ReportFinding(
     string Title,
     string Detail);
 
+public sealed record ReportRecommendation(
+    string Severity,
+    string Code,
+    string Title,
+    string Detail,
+    string RecommendedAction);
+
 public sealed record ReportArtifact(
     string Type,
     string Name,
@@ -90,6 +97,8 @@ public sealed record AccountManagementReportData
     public LicenseReportSection LicenseSummary { get; init; } = new();
 
     public UserLicenseReportSection UserLicenses { get; init; } = new();
+
+    public IReadOnlyList<ReportRecommendation> Recommendations { get; init; } = [];
 }
 
 public sealed record LicenseReportSection

@@ -134,6 +134,7 @@ public static class AccountManagementReportRunner
             Environment.GetEnvironmentVariable("GRAPH_ACCESS_TOKEN"));
         var users = await userCollector.CollectAsync();
         var userLicenses = new UserLicenseSummaryBuilder(licenseSummary).Build(users.Users);
+        var recommendations = new RecommendationBuilder().Build(licenseSummary, userLicenses);
 
         var findings = new List<ReportFinding>
         {
@@ -172,6 +173,15 @@ public static class AccountManagementReportRunner
                 Detail: $"No friendly-name mapping was found for SKU '{unknownSku.SkuPartNumber}'. The technical SKU value was used as the display name."));
         }
 
+        foreach (var recommendation in recommendations)
+        {
+            findings.Add(new ReportFinding(
+                Severity: recommendation.Severity,
+                Code: recommendation.Code,
+                Title: recommendation.Title,
+                Detail: recommendation.Detail));
+        }
+
         if (includeInactiveUsers)
         {
             findings.Add(new ReportFinding(
@@ -197,6 +207,7 @@ public static class AccountManagementReportRunner
                 ["licensedUsers"] = userLicenses.Count(item => item.IsLicensed),
                 ["unlicensedUsers"] = userLicenses.Count(item => !item.IsLicensed),
                 ["disabledLicensedUsers"] = userLicenses.Count(item => item.IsLicensed && item.AccountEnabled == false),
+                ["recommendationCount"] = recommendations.Count,
                 ["unknownSkuMappings"] = licenseSummary.Count(item => !item.FriendlyNameKnown),
                 ["estimatedMonthlyWaste"] = 0,
                 ["skuMappingsLoaded"] = skuCatalog.Count,
@@ -214,7 +225,8 @@ public static class AccountManagementReportRunner
                 UserLicenses = new UserLicenseReportSection
                 {
                     Items = userLicenses
-                }
+                },
+                Recommendations = recommendations
             },
             Artifacts =
             [

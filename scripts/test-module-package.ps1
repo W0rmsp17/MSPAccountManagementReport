@@ -9,6 +9,7 @@ $requiredFiles = @(
     "docs/release.md",
     "MSPAccountManagementReport/MSPAccountManagementReport.csproj",
     "MSPAccountManagementReport/data/m365-sku-map.json",
+    "scripts/test-local-smoke.ps1",
     "samples/control-plane-import-request.json",
     "samples/job-input.json",
     "samples/subscribed-skus.sample.json",

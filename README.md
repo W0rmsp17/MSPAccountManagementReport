@@ -33,6 +33,12 @@ Output is written to `.out/result.json`.
 
 The local sample includes Microsoft 365 Business Premium, one unknown SKU to exercise fallback behavior, licensed users, an unlicensed user, and a disabled licensed user.
 
+Run the local executable smoke test:
+
+```powershell
+.\scripts\test-local-smoke.ps1
+```
+
 ## Docker Build
 
 ```powershell

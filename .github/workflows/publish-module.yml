@@ -29,6 +29,10 @@ jobs:
       - name: Test
         run: dotnet test MSPAccountManagementReport.sln --configuration Release
 
+      - name: Local smoke test
+        shell: pwsh
+        run: ./scripts/test-local-smoke.ps1
+
       - name: Set image metadata
         id: meta
         shell: bash

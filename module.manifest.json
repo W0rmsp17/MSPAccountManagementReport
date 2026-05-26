@@ -2,10 +2,10 @@
   "schemaVersion": "1.0",
   "id": "msp-account-management-report",
   "name": "MSP Account Management Report",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Generates account-management reporting for MSP customer review workflows, starting with Microsoft 365 license summary data.",
   "repository": "https://github.com/W0rmsp17/MSPAccountManagementReport",
-  "image": "ghcr.io/w0rmsp17/mspaccountmanagementreport/msp-account-management-report:0.1.1",
+  "image": "ghcr.io/w0rmsp17/mspaccountmanagementreport/msp-account-management-report:0.1.2",
   "runtime": "container-apps-job",
   "entrypoint": [
     "dotnet",

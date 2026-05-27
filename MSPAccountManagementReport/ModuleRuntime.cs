@@ -128,14 +128,16 @@ public static class AccountManagementReportRunner
                                    includeInactiveUsersProperty.ValueKind == JsonValueKind.True;
         var skuCatalog = SkuCatalogLookup.LoadDefault();
         using var ownedHttpClient = httpClient is null ? new HttpClient() : null;
+        var activeHttpClient = httpClient ?? ownedHttpClient!;
+        var graphAccessToken = await GraphAccessTokenProvider.ResolveAsync(activeHttpClient);
         var collector = new SubscribedSkuCollector(
-            httpClient ?? ownedHttpClient!,
-            Environment.GetEnvironmentVariable("GRAPH_ACCESS_TOKEN"));
+            activeHttpClient,
+            graphAccessToken);
         var subscribedSkus = await collector.CollectAsync();
         var licenseSummary = new LicenseSummaryBuilder(skuCatalog).Build(subscribedSkus.Skus);
         var userCollector = new UserCollector(
-            httpClient ?? ownedHttpClient!,
-            Environment.GetEnvironmentVariable("GRAPH_ACCESS_TOKEN"));
+            activeHttpClient,
+            graphAccessToken);
         var users = await userCollector.CollectAsync();
         var userLicenses = new UserLicenseSummaryBuilder(licenseSummary).Build(users.Users);
         var recommendations = new RecommendationBuilder().Build(licenseSummary, userLicenses);
@@ -153,14 +155,14 @@ public static class AccountManagementReportRunner
                 Title: subscribedSkus.Source == "Graph" ? "Subscribed SKU collection completed" : "Sample subscribed SKU data used",
                 Detail: subscribedSkus.Source == "Graph"
                     ? "Collected subscribed SKU data from Microsoft Graph."
-                    : "No GRAPH_ACCESS_TOKEN was supplied, so the module used local sample subscribed SKU data."),
+                    : "No Graph access token was supplied, so the module used local sample subscribed SKU data."),
             new(
                 Severity: "Info",
                 Code: users.Source == "Graph" ? "GRAPH_USERS_COLLECTED" : "GRAPH_USERS_SAMPLE_USED",
                 Title: users.Source == "Graph" ? "User collection completed" : "Sample user data used",
                 Detail: users.Source == "Graph"
                     ? "Collected user license assignment data from Microsoft Graph."
-                    : "No GRAPH_ACCESS_TOKEN was supplied, so the module used local sample user data."),
+                    : "No Graph access token was supplied, so the module used local sample user data."),
             new(
                 Severity: "Info",
                 Code: "SKU_CATALOG_LOADED",
@@ -250,4 +252,39 @@ public static class AccountManagementReportRunner
             ]
         };
     }
+}
+
+public static class GraphAccessTokenProvider
+{
+    public static async Task<string?> ResolveAsync(HttpClient httpClient)
+    {
+        var directToken = Environment.GetEnvironmentVariable("GRAPH_ACCESS_TOKEN");
+        if (!string.IsNullOrWhiteSpace(directToken))
+        {
+            return directToken;
+        }
+
+        var runtimeTokenUrl = Environment.GetEnvironmentVariable("CONTROL_PLANE_RUNTIME_TOKEN_URL");
+        var runtimeToken = Environment.GetEnvironmentVariable("CONTROL_PLANE_RUNTIME_TOKEN");
+        if (string.IsNullOrWhiteSpace(runtimeTokenUrl) || string.IsNullOrWhiteSpace(runtimeToken))
+        {
+            return null;
+        }
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, runtimeTokenUrl);
+        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", runtimeToken);
+        using var response = await httpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        var json = await response.Content.ReadAsStringAsync();
+        var tokenResponse = ModuleProgram.FromJson<RuntimeGraphTokenResponse>(json);
+        return tokenResponse?.AccessToken;
+    }
+}
+
+public sealed class RuntimeGraphTokenResponse
+{
+    public string? AccessToken { get; init; }
+
+    public DateTimeOffset ExpiresOn { get; init; }
 }

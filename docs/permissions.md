@@ -13,10 +13,13 @@ The module does not store Graph credentials or tenant secrets.
 
 ## Runtime Token Handling
 
-The control plane should inject a short-lived Microsoft Graph bearer token through `GRAPH_ACCESS_TOKEN`.
-The module uses the token only for the current execution and does not persist it in output artifacts.
+The control plane should inject a short-lived job-scoped broker token through `CONTROL_PLANE_RUNTIME_TOKEN`.
+The module exchanges that token at `CONTROL_PLANE_RUNTIME_TOKEN_URL` for a Microsoft Graph bearer token during execution.
+The module uses the Graph token only for the current execution and does not persist it in output artifacts.
 
-When `GRAPH_ACCESS_TOKEN` is omitted, the module falls back to local sample data.
+`GRAPH_ACCESS_TOKEN` is still supported for local development and backward-compatible smoke tests.
+
+When no Graph token source is available, the module falls back to local sample data.
 This supports local development and CI without tenant access.
 
 ## Consent Review Notes

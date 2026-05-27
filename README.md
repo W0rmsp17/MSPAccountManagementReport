@@ -20,8 +20,9 @@ The module writes output to:
 - `CONTROL_PLANE_OUTPUT_PATH` when supplied locally
 - `.out/result.json` by default
 
-Live Microsoft Graph collection is enabled when the controller supplies `GRAPH_ACCESS_TOKEN`.
-Without that token, the module uses `samples/subscribed-skus.sample.json` and `samples/users.sample.json` so local runs and CI remain deterministic.
+Live Microsoft Graph collection is enabled when the controller supplies `CONTROL_PLANE_RUNTIME_TOKEN_URL` and `CONTROL_PLANE_RUNTIME_TOKEN`. The module exchanges that job-scoped token with the control plane for a Microsoft Graph token at runtime.
+
+`GRAPH_ACCESS_TOKEN` remains supported as a local development fallback. Without either token source, the module uses `samples/subscribed-skus.sample.json` and `samples/users.sample.json` so local runs and CI remain deterministic.
 
 ## Local Run
 
